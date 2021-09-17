@@ -2,7 +2,7 @@ from enum import Enum
 import sys
 
 def converte_array(args = ['0','0','0','0','0','0','0','0','0']):
-    array = list(map( int, args[1:]))
+    array = args[1:]
     matrix = [array[0:3], array[3:6], array[6:9]]
     return matrix
 
