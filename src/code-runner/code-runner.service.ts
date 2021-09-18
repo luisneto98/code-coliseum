@@ -11,7 +11,7 @@ export class CodeRunnerService {
 
   async runPythonCode(filename: string, args: string[]): Promise<any> {
     return new Promise((resolve, reject) => {
-      const python = spawn('python', [path.join('tmp', filename), ...args]);
+      const python = spawn('python3', [path.join('tmp', filename), ...args]);
       python.stdout.on('data', data => {
         resolve(data.toString());
       });
