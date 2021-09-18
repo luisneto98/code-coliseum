@@ -24,24 +24,32 @@ export class HashService {
       ['0', '0', '0'],
     ];
     let victory: string = null;
-    let turn: '1' | '2' = '1';
+    let turnPlayer: '1' | '2' = '1';
+    let gameJson = {};
+
     for (let i = 0; i < 9; i++) {
       const codeResult = await this.codeRunnerService.runCode(
-        turn  == '1' ? code1 : code2,
-        turn == '1' ? flatten(hash) : this.convertArrayToCode2(flatten(hash)),
+        turnPlayer == '1' ? code1 : code2,
+        turnPlayer == '1'
+          ? flatten(hash)
+          : this.convertArrayToCode2(flatten(hash)),
       );
-      console.log(turn, codeResult);
+
       const codeMove = this.checkValidPosition(hash, codeResult);
       const posiObj = hashPosiMap[codeMove];
-      hash[posiObj.i][posiObj.j] = turn;
+      hash[posiObj.i][posiObj.j] = turnPlayer;
 
-      turn = turn == '1' ? '2' : '1';
+      gameJson = {
+        ...gameJson,
+        [i]: { turn: i, player: turnPlayer, move: codeMove },
+      };
 
       victory = this.checkVictory(hash);
       if (victory) break;
+      turnPlayer = turnPlayer == '1' ? '2' : '1';
     }
-    console.log(victory);
-    return [...hash, [victory]];
+
+    return gameJson;
   }
 
   convertArrayToCode2(arr: string[]): string[] {
@@ -53,7 +61,11 @@ export class HashService {
   }
 
   checkValidPosition(hash: string[][], value: string): string {
-    if (Object.keys(hashPosiMap).includes(value)) return value;
+    if (
+      Object.keys(hashPosiMap).includes(value) &&
+      hash[hashPosiMap[value].i][hashPosiMap[value].j] == '0'
+    )
+      return value;
     return Object.keys(hashPosiMap).find(
       p => hash[hashPosiMap[p].i][hashPosiMap[p].j] == '0',
     );
@@ -80,28 +92,28 @@ export class HashService {
   }
 
   checkVictoryInLine(hash: string[][], line: number): string {
-    if(hash[line][0] == '0') return null
+    if (hash[line][0] == '0') return null;
     return hash[line][0] == hash[line][1] && hash[line][0] == hash[line][2]
       ? hash[line][0]
       : null;
   }
 
   checkVictoryInCol(hash: string[][], col: number): string {
-    if(hash[0][col] == '0') return null
+    if (hash[0][col] == '0') return null;
     return hash[0][col] == hash[1][col] && hash[0][col] == hash[2][col]
       ? hash[0][col]
       : null;
   }
 
   checkVictoryInLeftDiag(hash: string[][]): string {
-    if(hash[0][0] == '0') return null
+    if (hash[0][0] == '0') return null;
     return hash[0][0] == hash[1][1] && hash[0][0] == hash[2][2]
       ? hash[0][0]
       : null;
   }
 
   checkVictoryInRigthDiag(hash: string[][]): string {
-    if(hash[0][2] == '0') return null
+    if (hash[0][2] == '0') return null;
     return hash[0][2] == hash[1][1] && hash[0][2] == hash[2][0]
       ? hash[0][2]
       : null;
