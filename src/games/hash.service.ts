@@ -17,14 +17,14 @@ const hashPosiMap = {
 export class HashService {
   constructor(private readonly codeRunnerService: CodeRunnerService) {}
 
-  async run(code1: string, code2: string): Promise<any> {
+  async run(code1: string, code2: string, startCode: '1' | '2'= '1'): Promise<any> {
     const hash = [
       ['0', '0', '0'],
       ['0', '0', '0'],
       ['0', '0', '0'],
     ];
     let victory: string = null;
-    let turnPlayer: '1' | '2' = '1';
+    let turnPlayer: '1' | '2' = startCode;
     let gameJson = {};
 
     for (let i = 0; i < 9; i++) {
@@ -49,7 +49,7 @@ export class HashService {
       turnPlayer = turnPlayer == '1' ? '2' : '1';
     }
 
-    return gameJson;
+    return { turns: gameJson, victory };
   }
 
   convertArrayToCode2(arr: string[]): string[] {
