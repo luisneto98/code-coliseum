@@ -28,20 +28,20 @@ export class HashService {
     let gameJson = {};
 
     for (let i = 0; i < 9; i++) {
-      const codeResult = await this.codeRunnerService.runCode(
+      const codeMove = await this.codeRunnerService.runCode(
         turnPlayer == '1' ? code1 : code2,
         turnPlayer == '1'
           ? flatten(hash)
           : this.convertArrayToCode2(flatten(hash)),
       );
 
-      const codeMove = this.checkValidPosition(hash, codeResult);
-      const posiObj = hashPosiMap[codeMove];
+      const move = this.checkValidPosition(hash, codeMove);
+      const posiObj = hashPosiMap[move];
       hash[posiObj.i][posiObj.j] = turnPlayer;
 
       gameJson = {
         ...gameJson,
-        [i]: { turn: i, player: turnPlayer, move: codeMove },
+        [i]: { turn: i, player: turnPlayer, move, codeMove },
       };
 
       victory = this.checkVictory(hash);
